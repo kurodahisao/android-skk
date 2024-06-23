@@ -65,7 +65,7 @@ class FlickJPKeyboardView : KeyboardView, KeyboardView.OnKeyboardActionListener 
         a.append(KEYCODE_FLICK_JP_CHAR_MA, arrayOf("ま", "み", "む", "め", "も", "", ""))
         a.append(KEYCODE_FLICK_JP_CHAR_YA, arrayOf("や", "（", "ゆ", "）", "よ", "小", ""))
         a.append(KEYCODE_FLICK_JP_CHAR_RA, arrayOf("ら", "り", "る", "れ", "ろ", "", ""))
-        a.append(KEYCODE_FLICK_JP_CHAR_WA, arrayOf("わ", "を", "ん", "ー", "〜", "", ""))
+        a.append(KEYCODE_FLICK_JP_CHAR_WA, arrayOf("わ", "ゐ", "ん", "ゑ", "を", "ー", "〜", "", ""))
         a.append(KEYCODE_FLICK_JP_CHAR_TEN, arrayOf("、", "。", "？", "！", "...", "", ""))
         a.append(KEYCODE_FLICK_JP_CHAR_TEN_SHIFTED, arrayOf("（", "「", "」", "）", "", "", ""))
         a.append(KEYCODE_FLICK_JP_CHAR_TEN_NUM, arrayOf("，", "．", "−", "：", "", "", ""))
@@ -637,10 +637,30 @@ class FlickJPKeyboardView : KeyboardView, KeyboardView.OnKeyboardActionListener 
                         mService.processKey('a'.toInt())
                     }
                     FLICK_STATE_LEFT -> {
-                        mService.processKey('w'.toInt())
+                        if (isShifted) {
+                            mService.processKey('W'.toInt())
+                        } else {
+                            mService.processKey('w'.toInt())
+                        }
+                        mService.processKey('i'.toInt())
+                    }
+                    FLICK_STATE_RIGHT -> {
+                        if (isShifted) {
+                            mService.processKey('W'.toInt())
+                        } else {
+                            mService.processKey('w'.toInt())
+                        }
+                        mService.processKey('e'.toInt())
+                    }
+                    FLICK_STATE_DOWN -> {
+                        if (isShifted) {
+                            mService.processKey('W'.toInt())
+                        } else {
+                            mService.processKey('w'.toInt())
+                        }
                         mService.processKey('o'.toInt())
                     }
-                    FLICK_STATE_UP -> {
+                    FLICK_STATE_UP  -> {
                         if (isShifted) {
                             mService.processKey('N'.toInt())
                         } else {
@@ -648,8 +668,8 @@ class FlickJPKeyboardView : KeyboardView, KeyboardView.OnKeyboardActionListener 
                         }
                         mService.processKey('n'.toInt())
                     }
-                    FLICK_STATE_RIGHT -> mService.processKey('-'.toInt())
-                    FLICK_STATE_DOWN  -> mService.processKey('~'.toInt())
+                    FLICK_STATE_NONE_LEFT -> mService.processKey('-'.toInt())
+                    FLICK_STATE_NONE_RIGHT -> mService.processKey('~'.toInt())
                 }
                 return
             }

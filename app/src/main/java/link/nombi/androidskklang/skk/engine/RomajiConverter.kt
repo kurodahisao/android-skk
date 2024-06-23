@@ -13,7 +13,7 @@ object RomajiConverter {
         "ma" to "ま", "mi" to "み", "mu" to "む", "me" to "め", "mo" to "も",
         "ya" to "や", "yi" to "い", "yu" to "ゆ", "ye" to "いぇ", "yo" to "よ",
         "ra" to "ら", "ri" to "り", "ru" to "る", "re" to "れ", "ro" to "ろ",
-        "wa" to "わ", "wi" to "うぃ", "we" to "うぇ", "wo" to "を", "nn" to "ん",
+        "wa" to "わ", "wi" to "ゐ", "we" to "ゑ", "wo" to "を", "nn" to "ん",
         "ga" to "が", "gi" to "ぎ", "gu" to "ぐ", "ge" to "げ", "go" to "ご",
         "za" to "ざ", "zi" to "じ", "zu" to "ず", "ze" to "ぜ", "zo" to "ぞ",
         "da" to "だ", "di" to "ぢ", "du" to "づ", "de" to "で", "do" to "ど",

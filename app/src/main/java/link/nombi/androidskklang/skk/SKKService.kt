@@ -267,7 +267,7 @@ class SKKService : InputMethodService() {
         return mUseSoftKeyboard
     }
 
-    override fun onConfigurationChanged(newConfig: Configuration?) {
+    override fun onConfigurationChanged(newConfig: Configuration) {
         mFlickJPInputView = null
         mQwertyInputView = null
         mAbbrevKeyboardView = null

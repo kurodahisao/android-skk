@@ -3,8 +3,8 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion "29.0.3"
+    compileSdkVersion 30
+    buildToolsVersion "30.0.2"
 
     defaultConfig {
         applicationId "link.nombi.androidskklang"
@@ -34,4 +34,23 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+}
+
+android {
+    signingConfigs {
+        release {
+            storeFile file('keystore.jks')
+            storePassword 'skkandroid'
+            keyAlias 'skkandroid'
+            keyPassword 'skkandroid'
+        }
+    }
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+        }
+    }
+    lintOptions {
+        abortOnError false
+    }
 }
