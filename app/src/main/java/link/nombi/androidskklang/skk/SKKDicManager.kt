@@ -3,6 +3,7 @@ package link.nombi.androidskklang
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import androidx.core.content.FileProvider
 import android.os.Bundle
 import android.preference.PreferenceManager
 import androidx.appcompat.app.AppCompatActivity
