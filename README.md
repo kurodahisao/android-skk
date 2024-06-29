@@ -131,25 +131,31 @@ SKK自体の使い方については [ニコニコ大百科](https://dic.nicovid
 ## 正字正假名 (by KURODA Hisao)
  - 「わ」行から「ゐ」と「ゑ」を入力できるやうにした。
  - 以下の版でbuildできるやう改變を加へた。
+```
    openjdk version "17.0.11" 2024-04-16
    OpenJDK Runtime Environment (build 17.0.11+9-Debian-1deb12u1)
    OpenJDK 64-Bit Server VM (build 17.0.11+9-Debian-1deb12u1, mixed mode, sharing)
    ------------------------------------------------------------
    Gradle 4.4.1
    ------------------------------------------------------------
+```
  - （Java Security Policy の變更で?）辭書に access できないため AndroidManifest.xml に <provider.../> を追加し、application private 領域を Ghost Commander などから access できるやうにした。
     - ここに手動で辭書を置いてやれば辭書追加操作ができるやうになる。
     - npiii.l.jis (kstn.fc2web.com/seikana_zisyo.html) を utf8 に變換したものを npiii.l.txt として置いたが "SKK 辭書管理"→「辭書を追加」しても反映されないので、"SKK ユーザー辭書ツール" で npiii.l.txt を「インポート」してから「エクスポート」で一旦 skk_userdict.txt に保存し、これを改めて「辭書を追加」適用してやると、一先づ正字正假名環境にすることができた。
       - 目視確認の結果、 skk_userdict.txt と npiii.l.txt の違ひは sort されてゐるか否か。
       - moto g32(w)  Android version 11 で動作確認。
  - おそらく original の作者は、辭書に、
-      # /#3/#2/
-      #y /#2年/#3年/#0年/
-      #おくえん /#3億圓/
-      だい# /第#3/
+```
+     # /#3/#2/
+     #y /#2年/#3年/#0年/
+     #おくえん /#3億圓/
+     だい# /第#3/
+```
    のやうな entry があった場合の動きについて、知らないか完全無視をしてゐる。
     - 力まかせに初めてのJavaを書いて、上例の一部が成功するやうにした。
+```
       1978y → 一九七八年
       18c → 十八世紀
       112304560789120 → 百十二兆三千四十五億六千七十八萬九千百二十
+```
     - 未だをかしな動きが目立つ上に時々落ちる…
