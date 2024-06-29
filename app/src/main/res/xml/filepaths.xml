@@ -1,4 +1,4 @@
 <paths>
-    <files-path path="dict/" name="dict" />
-    <external-files-path path="dict/" name="dict" />
+<!--    <files-path path="dict/" name="dict" /> -->
+   <external-files-path path="dict/" name="dict" />
 </paths>

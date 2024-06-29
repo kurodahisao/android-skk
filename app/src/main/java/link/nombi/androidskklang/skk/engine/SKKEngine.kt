@@ -1,6 +1,10 @@
 package link.nombi.androidskklang.engine
 
+import java.io.File
+import java.io.FileOutputStream
+import java.io.PrintWriter
 import java.util.ArrayDeque
+import java.util.regex.*
 import link.nombi.androidskklang.dlog
 import link.nombi.androidskklang.isAlphabet
 import link.nombi.androidskklang.processConcatAndEscape
@@ -241,9 +245,10 @@ class SKKEngine(
         }
 
         // 最初の候補より戻ると変換に戻る 最後の候補より進むと登録
+        
         if (mCurrentCandidateIndex > candList.size - 1) {
             if (state === SKKChooseState) {
-                registerStart(mKanjiKey.toString())
+                registerStart(convertNumbers(mKanjiKey.toString()))
                 return
             } else if (state === SKKNarrowingState) {
                 mCurrentCandidateIndex = 0
@@ -397,6 +402,123 @@ class SKKEngine(
         ic.setComposingText(ct, newCursorPosition)
     }
 
+    internal fun foobar (line: String): String {
+      try {
+          val file = File("/storage/emulated/0/Android/data/link.nombi.androidskklang/files/SKK_debug_2.txt")
+          val pw = PrintWriter(FileOutputStream(file,true))
+          pw.println()
+          pw.println(line)
+          pw.close()
+        } catch (e: Exception) {
+          throw RuntimeException(e)
+        }
+        return line
+    }
+
+    internal fun zenkakuNum(num: String): String {
+        var zen = "";
+        val zenList = listOf("０", "１", "２", "３", "４", "５", "６", "７", "８", "９");
+        for (c in num) {
+            if (c >= '0' && c <= '9') {
+                val n = c - '0';
+                zen = zen + zenList[n];
+            } else {
+                return zen;
+            }
+        }
+        return zen;
+    }
+
+    internal fun kanjiNum1(num: String): String {
+        var zen = "";
+        val zenList = listOf("〇", "一", "二", "三", "四", "五", "六", "七", "八", "九");
+        for (c in num) {
+            if (c >= '0' && c <= '9') {
+                val n = c - '0';
+                zen = zen + zenList[n];
+            } else {
+                return zen;
+            }
+        }
+        return zen;
+    }
+
+    internal fun kanjiNum2(nnum: String): String {
+        var num: String
+        var zen = "";
+        var rev = "";
+        val zenList = listOf("〇", "一", "二", "三", "四", "五", "六", "七", "八", "九");
+        val pattern = Pattern.compile("^0+")
+        val matcher = pattern.matcher(nnum)
+        if (matcher.find()) {   // remove 0 from head
+            num = nnum.substring(matcher.end())
+        } else {
+            num = nnum;
+        }
+        for (c in num) {        // reverse number char
+            if (c >= '0' && c <= '9') {
+                val n = c - '0';
+                rev = c + rev;
+            }
+        }
+        if (rev == "") return "零";
+        for (i in 0 until rev.length) {
+            val c = rev[i];
+            val n = c - '0';
+            val r = i % 4;
+            if (r==1) {
+                if (n!=0) zen = "十" + zen;
+            } else if (r==2) {
+                if (n!=0) zen = "百" + zen;
+            } else if (r==3) {
+                if (n!=0) zen = "千" + zen;
+            }
+            if (r!=0 && n!=0 && n!=1) zen = zenList[n] + zen;
+            if (i==4) {
+                if (n!=0 || rev.length <=  8) zen = "萬" + zen;
+            } else if (i==8) {
+                if (n!=0 || rev.length <= 12) zen = "億" + zen;
+            } else if (i==12) {
+                if (n!=0 || rev.length <= 16) zen = "兆" + zen;
+            } else if (i==16) {
+                if (n!=0 || rev.length <= 20) zen = "京" + zen;
+            }
+            if (r==0 && n!=0) zen = zenList[n] + zen;
+        }
+        return zen;
+    }
+
+    internal fun kanjiNumbers(num: String, key: String): String {
+        val key02 = key.substring(0,2);
+        val keyrest = key.substring(2);
+        if (key02.equals("#0")) {
+            return num + keyrest;
+        } else if (key02.equals("#1")) {
+            return zenkakuNum(num) + keyrest;
+        } else if (key02.equals("#2")) {
+            return kanjiNum1(num) + keyrest;
+        } else if (key02.equals("#3")) {
+            return kanjiNum2(num) + keyrest;
+        } else {
+            return key;
+        }
+    }
+
+    internal fun convertNumbers(key: String): String {
+        val str: String
+        val pattern = Pattern.compile("^[0-9]+")
+        val matcher = pattern.matcher(key)
+        if (matcher.find()) {
+             val start = matcher.start()
+             val end = matcher.end()
+             // val group = matcher.group()
+             str = "#" + key.substring(end)
+        } else {
+             str = key
+        }
+        return str
+    }
+
     /***
      * 変換スタート
      * 送りありの場合，事前に送りがなをmOkuriganaにセットしておく
@@ -404,12 +526,13 @@ class SKKEngine(
      */
     internal fun conversionStart(key: StringBuilder) {
         val str = key.toString()
+        val sharp = convertNumbers(str) // 12c → #c
 
         changeState(SKKChooseState)
 
-        val list = findCandidates(str)
+        val list = findCandidates(sharp)
         if (list == null) {
-            registerStart(str)
+            registerStart(sharp)
             return
         }
 
@@ -424,7 +547,8 @@ class SKKEngine(
         if (SKKNarrowingState.mOriginalCandidates == null) {
             SKKNarrowingState.mOriginalCandidates = mCandidatesList
         }
-        val hintKanjis = findCandidates(hint)
+        val sharp = convertNumbers(hint) // 2y → #2
+        val hintKanjis = findCandidates(sharp)
                 ?.joinToString(
                     separator="",
                     transform={ processConcatAndEscape(removeAnnotation(it)) }
@@ -562,7 +686,11 @@ class SKKEngine(
 
     fun setCurrentCandidateToComposing() {
         val candList = mCandidatesList ?: return
-        val candidate = processConcatAndEscape(removeAnnotation(candList[mCurrentCandidateIndex]))
+        var candidate = processConcatAndEscape(removeAnnotation(candList[mCurrentCandidateIndex]));
+
+        if (candidate.length >= 2 && candidate.substring(0,1) == "#") {
+            candidate = kanjiNumbers(mKanjiKey.toString(), candidate)
+        }
         if (mOkurigana != null) {
             setComposingTextSKK(candidate + mOkurigana, 1)
         } else {
@@ -577,11 +705,14 @@ class SKKEngine(
     private fun pickCandidate(index: Int) {
         if (state !== SKKChooseState && state !== SKKNarrowingState) return
         val candList = mCandidatesList ?: return
-        val candidate = processConcatAndEscape(removeAnnotation(candList[index]))
+        var candidate = processConcatAndEscape(removeAnnotation(candList[index]))
 
-        mUserDict.addEntry(mKanjiKey.toString(), candList[index], mOkurigana)
+        mUserDict.addEntry(convertNumbers(mKanjiKey.toString()), candList[index], mOkurigana)
         // ユーザー辞書登録時はエスケープや注釈を消さない
 
+        if (candidate.length >= 2 && candidate.substring(0,1) == "#") {
+            candidate = kanjiNumbers(mKanjiKey.toString(), candidate)
+        }
         commitTextSKK(candidate, 1)
         val okuri = mOkurigana
         if (okuri != null) {
