@@ -417,7 +417,7 @@ class SKKEngine(
 
     internal fun zenkakuNum(num: String): String {
         var zen = "";
-        val zenList = listOf("０", "１", "２", "３", "４", "５", "６", "７", "８", "９");
+        val zenList = "０１２３４５６７８９";
         for (c in num) {
             if (c >= '0' && c <= '9') {
                 val n = c - '0';
@@ -431,7 +431,7 @@ class SKKEngine(
 
     internal fun kanjiNum1(num: String): String {
         var zen = "";
-        val zenList = listOf("〇", "一", "二", "三", "四", "五", "六", "七", "八", "九");
+        val zenList = "〇一二三四五六七八九";
         for (c in num) {
             if (c >= '0' && c <= '9') {
                 val n = c - '0';
@@ -443,47 +443,48 @@ class SKKEngine(
         return zen;
     }
 
-    internal fun kanjiNum2(nnum: String): String {
-        var num: String
+    internal fun allzerop(num: String, start: Int, end: Int): Boolean {
+        var stop = if (end < num.length) end; else num.length;
+        for (i in start until stop) {
+            if (num[i]=='0')
+                continue;
+            else
+                return false;
+        }
+        return true;
+    }
+
+    internal fun kanjiNum2(num: String): String {
         var zen = "";
         var rev = "";
-        val zenList = listOf("〇", "一", "二", "三", "四", "五", "六", "七", "八", "九");
-        val pattern = Pattern.compile("^0+")
-        val matcher = pattern.matcher(nnum)
-        if (matcher.find()) {   // remove 0 from head
-            num = nnum.substring(matcher.end())
-        } else {
-            num = nnum;
-        }
-        for (c in num) {        // reverse number char
+        val zenList = "〇一二三四五六七八九";
+        val kanList = "零十百千萬十百千億十百千兆十百千京十百千";
+        for (c in num) {        // reverse number and remove non char
             if (c >= '0' && c <= '9') {
                 val n = c - '0';
                 rev = c + rev;
             }
         }
-        if (rev == "") return "零";
-        for (i in 0 until rev.length) {
+        if (allzerop(rev, 0, rev.length)) // 一桁目 (i==0)
+            zen = kanList[0] + zen;       // 零
+        else if (rev[0] != '0')
+            zen = zenList[rev[0]-'0'] + zen; // 零以外
+        for (i in 1 until rev.length) { // 二桁目 (i==1) 以降
             val c = rev[i];
             val n = c - '0';
             val r = i % 4;
-            if (r==1) {
-                if (n!=0) zen = "十" + zen;
-            } else if (r==2) {
-                if (n!=0) zen = "百" + zen;
-            } else if (r==3) {
-                if (n!=0) zen = "千" + zen;
+            if (r!=0) {
+                if (n!=0) {
+                    zen = kanList[i] + zen; // 十、百、千
+                    if (n!=1)
+                        zen = zenList[n] + zen;
+                }
+            } else {                        // i==4の倍数
+                if (!allzerop(rev, i, i+4)) // 4桁全て0でなければ、
+                    zen = kanList[i] + zen; // 億、兆、京
+                if (n!=0)
+                    zen = zenList[n] + zen;
             }
-            if (r!=0 && n!=0 && n!=1) zen = zenList[n] + zen;
-            if (i==4) {
-                if (n!=0 || rev.length <=  8) zen = "萬" + zen;
-            } else if (i==8) {
-                if (n!=0 || rev.length <= 12) zen = "億" + zen;
-            } else if (i==12) {
-                if (n!=0 || rev.length <= 16) zen = "兆" + zen;
-            } else if (i==16) {
-                if (n!=0 || rev.length <= 20) zen = "京" + zen;
-            }
-            if (r==0 && n!=0) zen = zenList[n] + zen;
         }
         return zen;
     }
