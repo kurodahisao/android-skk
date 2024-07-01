@@ -1,0 +1,31 @@
+How to debug your Android device under Ubuntu
+android-ubuntu
+When programming apps for Android, you usually want to test them on real Android devices.
+This little gist describes how to do so using Ubuntu 14.
+
+First, you need to download and install the Android development IDE (http://developer.android.com/sdk/index.html) and create an Android project which you want to debug.
+
+Next, you need to setup the debugging mode on your Android device. Starting in Android 4.2 you need to enable the developer options first: 1) Go to settings 2) Go to About Phone 3) Tap the build number 10 times (or more, not sure ;)) and you will get the notification that you enabled it.
+
+Then go to the developer settings and enable the debug mode for your phone. 
+
+Now you think you can just plug it into your USB mode? - Nope. 
+First, we will have to setup a udev rule for your device:
+
+1) Create this file as root: /etc/udev/rules.d/51-android.rules
+2) Make the file readable: sudo chmod o+r 51-android.rules
+3) Edit it with this content: SUBSYSTEM=="usb", SYSFS{idVendor}=="0bb4", MODE="0666", GROUP="plugdev"
+(Note: Sometimes you need net instead of usb, that was the case for me, check other rules in /etc/udev/rules.d for comparison)
+4) sudo service udev restart
+
+The vendor ID (0bb4) depends on your specific phone, find a list here: http://developer.android.com/tools/device.html#VendorIds
+
+Then you want to install adb if you have not yet:
+1) sudo apt-get install android-tools-adb
+2) sudo adb kill-server
+3) sudo adb start-server
+
+Now you can plugin your device. There should be message on your phone whether you want to allow to debug it -> obviously say yes.
+Then running sudo adb devices should properly list your device.
+
+Using the Android IDE you can now debug your app on your device :)

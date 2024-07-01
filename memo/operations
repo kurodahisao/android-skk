@@ -1,0 +1,26 @@
+  598  sudo apt install gparted   # extend partition
+
+  553  sudo apt-get update
+  544  sudo apt install openjdk-17-jre-headless
+  547  sudo apt install gradle
+  554  sudo apt-get install android-sdk
+  555  export ANDROID_HOME=/lib/android-sdk
+  557  echo sdk.dir = /lib/android-sdk/ | cat > local.properties
+  561  wget https://dl.google.com/android/repository/commandlinetools-linux-6609375_latest.zip
+  562  unzip commandlinetools-linux-6609375_latest.zip
+  564  sudo mv tools /lib/android-sdk/cmdline-tools
+  568  export PATH=/lib/android-sdk/cmdline-tools/bin:$PATH
+  580  wget https://dl.google.com/android/repository/build-tools_r30.0.2-linux.zip
+  582  unzip build-tools_r30.0.2-linux.zip
+  584  sudo mv android-11 /lib/android-sdk/build-tools/30.0.2
+  543  sudo rm /lib/android-sdk/build-tools/27.0.1
+  544  sudo mv /lib/android-sdk/build-tools/debian /lib/android-sdk/build-tools/27.0.1
+  551  (cd /lib/android-sdk/build-tools/; sudo ln -s 30.0.2 debian)
+  581  wget https://dl.google.com/android/repository/platform-30_r03.zip
+  584  sudo mv android-11 /lib/android-sdk/platforms/android-30
+  588  yes | sdkmanager --sdk_root=${ANDROID_HOME} --licenses
+  590  ./gradlew build
+
+https://stackoverflow.com/questions/47434877/how-to-generate-keystore-and-truststore
+https://qiita.com/scream_episode/items/1d6ed969d5c00d05f69e
+
