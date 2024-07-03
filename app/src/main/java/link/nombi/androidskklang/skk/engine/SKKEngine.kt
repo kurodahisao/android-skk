@@ -489,6 +489,39 @@ class SKKEngine(
         return zen;
     }
 
+    internal fun kanjiNum3(num: String): String {
+        var zen = "";
+        var rev = "";
+        val zenList = "〇壱弐參四伍六七八九";
+        val kanList1 = "零拾百阡";
+        val kanList2 = "萬億兆京";
+        for (c in num) {        // reverse number and remove non char
+            if (c >= '0' && c <= '9') {
+                val n = c - '0';
+                rev = c + rev;
+            }
+        }
+        if (allzerop(rev, 0, rev.length)) // 一桁目 (i==0)
+            zen = kanList1[0] + zen;      // 零
+        else if (rev[0] != '0')
+            zen = zenList[rev[0]-'0'] + zen; // 零以外
+        for (i in 1 until rev.length) { // 二桁目 (i==1) 以降
+            val c = rev[i];
+            val n = c - '0';
+            val r = i % 4;
+            val d = i / 4;
+            if (r!=0) {
+                if (n!=0)
+                    zen = kanList1[r] + zen; // 拾、百、阡
+            } else {                         // i==4の倍数
+                zen = kanList2[d-1] + zen;   // 億、兆、京
+            }
+            if (n!=0)
+                zen = zenList[n] + zen;
+        }
+        return zen;
+    }
+
     internal fun kanjiNumbers(num: String, key: String): String {
         val key02 = key.substring(0,2);
         val keyrest = key.substring(2);
@@ -500,6 +533,8 @@ class SKKEngine(
             return kanjiNum1(num) + keyrest;
         } else if (key02.equals("#3")) {
             return kanjiNum2(num) + keyrest;
+        } else if (key02.equals("#5")) {
+            return kanjiNum3(num) + keyrest;
         } else {
             return key;
         }

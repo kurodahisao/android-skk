@@ -139,15 +139,16 @@ OpenJDK 64-Bit Server VM (build 17.0.11+9-Debian-1deb12u1, mixed mode, sharing)
 Gradle 4.4.1
 ------------------------------------------------------------
 ```
- - （Java Security Policy の變更で?）辭書に access できないため AndroidManifest.xml に <provider.../> を追加し、application private 領域を Ghost Commander などから access できるやうにした。
+ - （Java Security Policy の變更で?）辭書に access できないため AndroidManifest.xml に <provider.../> を追加し、application private 領域を [Ghost Commander](https://f-droid.org/packages/com.ghostsq.commander/) などから access できるやうにした。
     - ここに手動で辭書を置いてやれば辭書追加操作ができるやうになる。
-    - [npiii.l.jis](kstn.fc2web.com/seikana_zisyo.html) を utf8 に變換したものを npiii.l.txt として置いたが "SKK 辭書管理"→「辭書を追加」しても反映されないので、"SKK ユーザー辭書ツール" で npiii.l.txt を「インポート」してから「エクスポート」で一旦 skk_userdict.txt に保存し、これを改めて「辭書を追加」適用してやると、一先づ正字正假名環境にすることができた。
+    - [npiii.l.jis](http://kstn.fc2web.com/seikana_zisyo.html) を utf8 に變換したものを npiii.l.txt として置いたが "SKK 辭書管理"→「辭書を追加」しても反映されないので、"SKK ユーザー辭書ツール" で npiii.l.txt を「インポート」してから「エクスポート」で一旦 skk_userdict.txt に保存し、これを改めて「辭書を追加」適用してやると、一先づ正字正假名環境にすることができた。
       - 目視確認の結果、 skk_userdict.txt と npiii.l.txt の違ひは sort されてゐるか否か。
       - moto g32(w)  Android version 11 で動作確認。
  - おそらく original の作者は、辭書に、
 ```
 # /#3/#2/
 #y /#2年/#3年/#0年/
+#yen /#5圓/
 #おくえん /#3億圓/
 だい# /第#3/
 ```
@@ -156,5 +157,7 @@ Gradle 4.4.1
 1978y → 一九七八年
 18c → 十八世紀
 112304560789120 → 百十二兆三千四十五億六千七十八萬九千百二十
+123456yen → 壱拾弐萬參阡四百伍拾六圓
 ```
  - 未だをかしな動きが目立つ上に時々落ちる…
+ - 當初Debianで試行錯誤しながらbuildを成功させたが、その時必要だった操作を覺えておくため、改めてUbuntuでbuildが成功するまで操作し、その履歴を[備忘録](memo/operations)として殘した。
