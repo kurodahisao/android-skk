@@ -65,11 +65,11 @@ class FlickJPKeyboardView : KeyboardView, KeyboardView.OnKeyboardActionListener 
         a.append(KEYCODE_FLICK_JP_CHAR_MA, arrayOf("ま", "み", "む", "め", "も", "", ""))
         a.append(KEYCODE_FLICK_JP_CHAR_YA, arrayOf("や", "（", "ゆ", "）", "よ", "小", ""))
         a.append(KEYCODE_FLICK_JP_CHAR_RA, arrayOf("ら", "り", "る", "れ", "ろ", "", ""))
-        a.append(KEYCODE_FLICK_JP_CHAR_WA, arrayOf("わ", "ゐ", "ん", "ゑ", "を", "ー", "〜", "", ""))
-        a.append(KEYCODE_FLICK_JP_CHAR_TEN, arrayOf("、", "。", "？", "！", "...", "", ""))
-        a.append(KEYCODE_FLICK_JP_CHAR_TEN_SHIFTED, arrayOf("（", "「", "」", "）", "", "", ""))
+        a.append(KEYCODE_FLICK_JP_CHAR_WA, arrayOf("わ", "ゐ", "ん", "ゑ", "を", "", ""))
+        a.append(KEYCODE_FLICK_JP_CHAR_TEN, arrayOf("、", "。", "？", "！", "…", "", ""))
+        a.append(KEYCODE_FLICK_JP_CHAR_TEN_SHIFTED, arrayOf("（）", "「」", "『』", "［］", "｛｝", "", ""))
         a.append(KEYCODE_FLICK_JP_CHAR_TEN_NUM, arrayOf("，", "．", "−", "：", "", "", ""))
-        a.append(KEYCODE_FLICK_JP_KOMOJI, arrayOf("小", "゛", "w", "゜", "", "", ""))
+        a.append(KEYCODE_FLICK_JP_KOMOJI, arrayOf("小", "゛", "ー", "゜", "〜", "", ""))
         a.append(KEYCODE_FLICK_JP_MOJI, arrayOf("あ", "：", "数", "＞", "号", "", ""))
     }
 
@@ -261,19 +261,19 @@ class FlickJPKeyboardView : KeyboardView, KeyboardView.OnKeyboardActionListener 
             "en" -> {
                 mKutoutenLabel = "，．？！"
                 mFlickGuideLabelList.put(
-                        KEYCODE_FLICK_JP_CHAR_TEN, arrayOf("，", "．", "？", "！", "", "", "")
+                        KEYCODE_FLICK_JP_CHAR_TEN, arrayOf("，", "．", "？", "！", "…", "", "")
                 )
             }
             "jp_en" -> {
                 mKutoutenLabel = "，。？！"
                 mFlickGuideLabelList.put(
-                        KEYCODE_FLICK_JP_CHAR_TEN, arrayOf("，", "。", "？", "！", "", "", "")
+                        KEYCODE_FLICK_JP_CHAR_TEN, arrayOf("，", "。", "？", "！", "…", "", "")
                 )
             }
             else -> {
                 mKutoutenLabel = "、。？！"
                 mFlickGuideLabelList.put(
-                        KEYCODE_FLICK_JP_CHAR_TEN, arrayOf("、", "。", "？", "！", "", "", "")
+                        KEYCODE_FLICK_JP_CHAR_TEN, arrayOf("、", "。", "？", "！", "…", "", "")
                 )
             }
         }
@@ -668,8 +668,6 @@ class FlickJPKeyboardView : KeyboardView, KeyboardView.OnKeyboardActionListener 
                         }
                         mService.processKey('n'.toInt())
                     }
-                    FLICK_STATE_NONE_LEFT -> mService.processKey('-'.toInt())
-                    FLICK_STATE_NONE_RIGHT -> mService.processKey('~'.toInt())
                 }
                 return
             }
@@ -685,10 +683,11 @@ class FlickJPKeyboardView : KeyboardView, KeyboardView.OnKeyboardActionListener 
             }
             KEYCODE_FLICK_JP_CHAR_TEN_SHIFTED -> {
                 when (flick) {
-                    FLICK_STATE_NONE  -> mService.processKey('('.toInt())
-                    FLICK_STATE_LEFT  -> mService.processKey('['.toInt())
-                    FLICK_STATE_UP    -> mService.processKey(']'.toInt())
-                    FLICK_STATE_RIGHT -> mService.processKey(')'.toInt())
+                    FLICK_STATE_NONE  -> {mService.commitTextSKK("（）", 0); mService.commitTextSKK("", -1)}
+                    FLICK_STATE_LEFT  -> {mService.commitTextSKK("「」", 0); mService.commitTextSKK("", -1)}
+                    FLICK_STATE_UP    -> {mService.commitTextSKK("『』", 0); mService.commitTextSKK("", -1)}
+                    FLICK_STATE_RIGHT -> {mService.commitTextSKK("［］", 0); mService.commitTextSKK("", -1)}
+                    FLICK_STATE_DOWN  -> {mService.commitTextSKK("｛｝", 0); mService.commitTextSKK("", -1)}
                 }
                 return
             }
@@ -842,9 +841,10 @@ class FlickJPKeyboardView : KeyboardView, KeyboardView.OnKeyboardActionListener 
             KEYCODE_FLICK_JP_ENTER  -> if (!mService.handleEnter()) mService.pressEnter()
             KEYCODE_FLICK_JP_KOMOJI -> when (mFlickState) {
                 FLICK_STATE_NONE  -> mService.changeLastChar(SKKEngine.LAST_CONVERTION_SMALL)
-                FLICK_STATE_UP    -> mService.commitTextSKK("w", 1)
+                FLICK_STATE_UP    -> mService.commitTextSKK("ー", 1)
                 FLICK_STATE_LEFT  -> mService.changeLastChar(SKKEngine.LAST_CONVERTION_DAKUTEN)
                 FLICK_STATE_RIGHT -> mService.changeLastChar(SKKEngine.LAST_CONVERTION_HANDAKUTEN)
+                FLICK_STATE_DOWN  -> mService.commitTextSKK("〜", 1)
             }
             KEYCODE_FLICK_JP_CANCEL -> mService.handleCancel()
             KEYCODE_FLICK_JP_MOJI   -> when (mFlickState) {

@@ -461,8 +461,7 @@ class SKKEngine(
         val kanList = "零十百千萬十百千億十百千兆十百千京十百千";
         for (c in num) {        // reverse number and remove non char
             if (c >= '0' && c <= '9') {
-                val n = c - '0';
-                rev = c + rev;
+                rev = c + rev;  // cons
             }
         }
         if (allzerop(rev, 0, rev.length)) // 一桁目 (i==0)
@@ -497,7 +496,6 @@ class SKKEngine(
         val kanList2 = "萬億兆京";
         for (c in num) {        // reverse number and remove non char
             if (c >= '0' && c <= '9') {
-                val n = c - '0';
                 rev = c + rev;
             }
         }
@@ -545,7 +543,7 @@ class SKKEngine(
         val pattern = Pattern.compile("^[0-9]+")
         val matcher = pattern.matcher(key)
         if (matcher.find()) {
-             val start = matcher.start()
+             // val start = matcher.start()
              val end = matcher.end()
              // val group = matcher.group()
              str = "#" + key.substring(end)

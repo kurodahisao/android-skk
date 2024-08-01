@@ -17,6 +17,7 @@
   544  sudo mv /lib/android-sdk/build-tools/debian /lib/android-sdk/build-tools/27.0.1
   551  (cd /lib/android-sdk/build-tools/; sudo ln -s 30.0.2 debian)
   581  wget https://dl.google.com/android/repository/platform-30_r03.zip
+  582  unzip platform-30_r03.zip 
   584  sudo mv android-11 /lib/android-sdk/platforms/android-30
   588  yes | sdkmanager --sdk_root=${ANDROID_HOME} --licenses
   590  ./gradlew build
